@@ -1,15 +1,28 @@
-const Sequelize = require('sequelize');
+const mongodb = require('mongodb');
 const dotenv = require('dotenv');
+
+const MongoClient = mongodb.MongoClient;
 
 dotenv.config();
 
-const sequelize = new Sequelize(
- process.env.MYSQL_DB_DATABASE,
- process.env.MYSQL_DB_USERNAME,
- process.env.MYSQL_PASSWORD,
- {
-  dialect: process.env.MYSQL_DIALECT,
-  host: process.env.MYSQL_DB_HOST
- });
+const mongoConnect = (callback) => {
+ let connnectionString = 'mongodb+srv://' + process.env.MONGODB_USERNAME +
+  ':' + process.env.MONGODB_PASSWORD +
+  '@' + process.env.MONGODB_CLUSTER + '-rej5u.mongodb.net/' +
+  process.env.MONGODB_DATABASE + '?retryWrites=true&w=majority';
 
-module.exports = sequelize;
+ MongoClient.connect(connnectionString,
+  {
+   useUnifiedTopology: true,
+   useNewUrlParser: true
+  })
+  .then(client => {
+   console.log('Connected');
+   callback(client);
+  })
+  .catch(err => {
+   console.log(err);
+  });
+}
+
+module.exports = mongoConnect;
