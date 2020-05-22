@@ -5,11 +5,11 @@ const path = require('path');
 const dotenv = require('dotenv');
 
 const errorsController = require('./controllers/error');
-const mongoConnect = require('./util/database');
+const mongoConnect = require('./util/database').mongoConnect;
 // const User = require('./models/user');
 
-// const adminRoutes = require('./routes/admin');
-// const shopRoutes = require('./routes/shop');
+const adminRoutes = require('./routes/admin');
+const shopRoutes = require('./routes/shop');
 
 const app = express();
 
@@ -29,14 +29,14 @@ app.use((req, res, next) => {
   //    next();
   //   })
   //   .catch(err => console.log(err));
+  next();
 });
 
-// app.use('/admin', adminRoutes);
-// app.use(shopRoutes);
+app.use('/admin', adminRoutes);
+app.use(shopRoutes);
 
 app.use(errorsController.get404);
 
-mongoConnect((client) => {
-  console.log(client);
+mongoConnect(() => {
   app.listen(process.env.PORT);
 })

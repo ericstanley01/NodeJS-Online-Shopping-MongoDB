@@ -14,30 +14,30 @@ router.get('/products', shopController.getProducts);
 
 // /products/:id
 // get request
-router.get('/products/:productId', shopController.getProduct);
+// router.get('/products/:productId', shopController.getProduct);
 
 // /cart
 // get request
-router.get('/cart', shopController.getCart);
+// router.get('/cart', shopController.getCart);
 
 // /cart
 // post request
-router.post('/cart', shopController.postCart);
+// router.post('/cart', shopController.postCart);
 
 // /cart-delete-item
 // post request
-router.post('/cart-delete-item', shopController.postCartDeleteProduct);
+// router.post('/cart-delete-item', shopController.postCartDeleteProduct);
 
 // /create-order
 // post request
-router.post('/create-order', shopController.postOrder);
+// router.post('/create-order', shopController.postOrder);
 
 // /checkout
 // get request
-router.get('/checkout', shopController.getCheckout);
+// router.get('/checkout', shopController.getCheckout);
 
 // /orders
 // get request
-router.get('/orders', shopController.getOrders)
+// router.get('/orders', shopController.getOrders)
 
 module.exports = router;
