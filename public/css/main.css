@@ -238,3 +238,7 @@ form {
     display: none;
   }
 }
+
+*:focus {
+  outline: 0 !important;
+}
