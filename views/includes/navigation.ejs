@@ -29,9 +29,14 @@
         <li class="main-header__item">
           <a class="<%= path === '/login' ? 'active' : '' %>" href="/login">Login</a>
         </li>
+        <li class="main-header__item">
+          <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
+        </li>
         <% } else { %>
           <li class="main-header__item">
+            <span>Hi <%= username %>, </span>
             <form action="/logout" method="POST">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
               <button type="submit">Logout</button>
             </form>
           </li>
@@ -70,9 +75,14 @@
       <li class="main-header__item">
         <a class="<%= path === '/login' ? 'active' : '' %>" href="/login">Login</a>
       </li>
+      <li class="main-header__item">
+        <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
+      </li>
     <% } else { %>
       <li class="main-header__item">
+        <span>Hi <%= username %>, </span>
         <form action="/logout" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <button type="submit">Logout</button>
         </form>
       </li>
