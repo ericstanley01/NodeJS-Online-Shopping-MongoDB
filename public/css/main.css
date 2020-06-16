@@ -43,7 +43,7 @@ form {
 .main-header__nav {
   height: 100%;
   width: 100%;
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: space-between;
 }
@@ -73,6 +73,10 @@ form {
 .main-header__item a,
 .main-header__item button {
   cursor: pointer;
+}
+
+.main-header__item .active {
+  color: #994b17;
 }
 
 .main-header__item a:hover,
@@ -111,6 +115,10 @@ form {
 .mobile-nav__item {
   margin: 1rem;
   padding: 0;
+}
+
+.mobile-nav__item .active {
+  color: #00695c;
 }
 
 .mobile-nav__item a {

@@ -15,7 +15,7 @@ router.post('/login', [
         .isEmail()
         .withMessage('Please enter a valid email')
         .normalizeEmail(),
-    expValidator.body('password', 'Please must be valid')
+    expValidator.body('password', 'Password must be valid')
         .isLength({ min: 6 })
         .isAlphanumeric(),
 ], authController.postLogin);

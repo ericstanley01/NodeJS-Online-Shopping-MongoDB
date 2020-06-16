@@ -18,9 +18,14 @@ const authRoutes = require('./routes/auth');
 
 dotenv.config();
 
-const MONGODB_URI = 'mongodb+srv://' + process.env.MONGODB_USERNAME +
+// const MONGODB_URI = 'mongodb+srv://' + process.env.MONGODB_USERNAME +
+//     ':' + process.env.MONGODB_PASSWORD +
+//     '@' + process.env.MONGODB_CLUSTER + '/' +
+//     process.env.MONGODB_DATABASE + '?retryWrites=true&w=majority';
+
+const MONGODB_URI = 'mongodb://' + process.env.MONGODB_USERNAME +
     ':' + process.env.MONGODB_PASSWORD +
-    '@' + process.env.MONGODB_CLUSTER + '-rej5u.mongodb.net/' +
+    '@' + process.env.MONGODB_CLUSTER + '/' +
     process.env.MONGODB_DATABASE + '?retryWrites=true&w=majority';
 
 const app = express();
@@ -48,29 +53,46 @@ app.use(csrfProtection);
 app.use(flash());
 
 app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn
+  res.locals.csrfToken = req.csrfToken();
+  res.locals.username = undefined;
+  next();
+});
+
+app.use((req, res, next) => {
   if(!req.session.user) {
     return next();
   }
   User.findById(req.session.user._id)
   .then(user => {
+    if(!user) {
+      return next();
+    }
     req.user = user;
     res.locals.username = req.user.name;
     next();
   })
-  .catch(err => console.log(err));
-});
-
-app.use((req, res, next) => {
-  res.locals.isAuthenticated = req.session.isLoggedIn
-  res.locals.csrfToken = req.csrfToken();
-  next();
+  .catch(err => {
+    next(new Error(err));
+  });
 });
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
 
+app.get('/500', errorsController.get500);
+
 app.use(errorsController.get404);
+
+app.use((err, req, res, next) => {
+  // res.redirect('/500');
+  res.status(500).render('500', {
+    title: 'Error occurred',
+    path: '/500',
+    isAuthenticated: req.session.isLoggedIn
+   });
+})
 
 mongoose
   .connect(MONGODB_URI, {
@@ -78,22 +100,6 @@ mongoose
     useNewUrlParser: true
   })
   .then(result => {
-    // User
-    //   .findOne()
-    //   .then(user => {
-    //     if (!user) {
-    //       const user = new User({
-    //         name: 'eric',
-    //         email: 'eric@test.com',
-    //         cart: {
-    //           items: []
-    //         }
-    //       });
-    //       user.save();
-    //     }
-    //   })
-    //   .catch(err => console.log(err));
-
     app.listen(process.env.PORT);
     console.log(`App started listening to port ${process.env.PORT}`)
   })
