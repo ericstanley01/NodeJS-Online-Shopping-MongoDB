@@ -4,9 +4,9 @@ const router = express.Router();
 
 const adminController = require('../controllers/admin');
 const isAuth = require('../middleware/is-auth');
-const fileHelper = require('../util/file');
 
 const expValidator = require('express-validator');
+const fileHelper = require('../util/file');
 
 // /admin/add-product
 // get request
@@ -31,7 +31,6 @@ router.post('/add-product', [
         .withMessage('Description should have a minimum of 8 and maximum of 200 chars')
         .trim()
 ], isAuth, 
-    // fileHelper.imageStorage.single('image'), 
     adminController.postAddProduct);
 
 // /admin/products

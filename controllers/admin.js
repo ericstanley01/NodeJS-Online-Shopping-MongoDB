@@ -59,19 +59,14 @@ exports.postAddProduct = (req, res, next) => {
     });
   }
 
-  const imageUrl = '/' + image.path;
-  // fileHelper.imageStorage
-  //   .single('image')
-  //   .then(res => {
-  //     console.log(res);
-  //   })
-  //   .catch(err => {
-  //     console.log(err);
-  //   });
+  // const imageUrl = '/' + image.path;
+  const imageUrl = req.image.url;
+  const imageAssetId = req.image.asset_id;
+  const imagePublicId = req.image.public_id;
 
   const product = new Product({
     // _id, 
-    title, price, description, imageUrl, userId: req.user
+    title, price, description, imageUrl, userId: req.user, imageAssetId, imagePublicId
   });
   product.save()
     .then(result => {
@@ -79,6 +74,7 @@ exports.postAddProduct = (req, res, next) => {
       res.redirect('/admin/products');
     })
     .catch(err => {
+      // console.log(err);
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
@@ -156,8 +152,16 @@ exports.postEditProduct = (req, res, next) => {
       product.price = updatedPrice;
       product.description = updatedDescription;
       if (image) {
-        fileHelper.deleteFile(product.imageUrl.substr(1));
-        product.imageUrl = '/' + image.path;
+        // fileHelper.deleteFile(product.imageUrl.substr(1));
+        fileHelper.removeFromCloud(product.imagePublicId);
+        // product.imageUrl = '/' + image.path;
+        const imageUrl = req.image.url;
+        const imageAssetId = req.image.asset_id;
+        const imagePublicId = req.image.public_id;
+        
+        product.imageUrl = imageUrl;
+        product.imageAssetId = imageAssetId;
+        product.imagePublicId = imagePublicId;
       }
       product.save().then(result => {
         console.log('Product updated!');
@@ -201,7 +205,8 @@ exports.postDeleteProduct = (req, res, next) => {
         error.httpStatusCode = 500;
         return next(error);
       }
-      fileHelper.deleteFile(product.imageUrl.substr(1));
+      // fileHelper.deleteFile(product.imageUrl.substr(1));
+      fileHelper.removeFromCloud(product.imagePublicId);
       return Product.findOneAndRemove({
         userId: req.user,
         _id: prodId

@@ -211,7 +211,7 @@ exports.getInvoice = (req, res, next) => {
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
 
-      invoicePDF.pipe(fs.createWriteStream(invoicePath));
+      // invoicePDF.pipe(fs.createWriteStream(invoicePath));
       invoicePDF.pipe(res);
 
       invoicePDF.fontSize(26).text('Invoice', {
