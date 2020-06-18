@@ -121,12 +121,3 @@ module.exports = {
     // dataUri: dataUri,
     // cloudinaryImageStore: cloudinaryImageStore
 }
-
-// exports.deleteFile = deleteFile;
-
-// exports.imageStorage = multer({
-//     storage: imageStorage
-//   });
-// exports.invoiceStorage = multer({
-//     storage: invoiceStorage
-//   }).single('pdf');
