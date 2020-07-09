@@ -28,10 +28,7 @@
   </article>
   <% } %>
  </div>
-    <section class="pagination">
-        <a href="/?page=1">1</a>
-        <a href="/?page=2">2</a>
-    </section>
+ <%- include('../includes/pagination.ejs', {currentPage: currentPage, nextPage: nextPage, prevPage: prevPage, lastPage: lastPage, hasNextPage: hasNextPage, hasPrevPage: hasPrevPage}) %>
  <% } else { %>
  <h1>No Products found!</h1>
  <% } %>

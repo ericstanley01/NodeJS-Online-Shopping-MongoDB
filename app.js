@@ -20,7 +20,6 @@ const authRoutes = require('./routes/auth');
 const { db } = require('./models/user');
 
 const fileHelper = require('./util/file');
-// const file = require('./util/file');
 
 // const MONGODB_URI = 'mongodb+srv://' + process.env.MONGODB_USERNAME +
 //     ':' + process.env.MONGODB_PASSWORD +
