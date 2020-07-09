@@ -1,6 +1,5 @@
 const Product = require('../models/product');
 const expValidator = require('express-validator');
-// const mongoose = require('mongoose');
 
 const fileHelper = require('../util/file');
 
@@ -16,7 +15,6 @@ exports.getAddProduct = (req, res, next) => {
 }
 
 exports.postAddProduct = (req, res, next) => {
-  // const _id = new mongoose.Types.ObjectId('5ee71c86bf21b883cdf03385');
   const title = req.body.title;
   const image = req.file;
   const description = req.body.description;
@@ -30,7 +28,6 @@ exports.postAddProduct = (req, res, next) => {
       hasError: true,
       product: {
         title: title,
-        // imageUrl: imageUrl,
         price: price,
         description: description
       },
@@ -42,7 +39,6 @@ exports.postAddProduct = (req, res, next) => {
   const errors = expValidator.validationResult(req);
 
   if(!errors.isEmpty()) {
-    // console.log(errors.array());
     return res.status(422).render('admin/edit-product', {
       title: 'Add Product',
       path: '/admin/add-product',
@@ -50,7 +46,6 @@ exports.postAddProduct = (req, res, next) => {
       hasError: true,
       product: {
         title: title,
-        // imageUrl: imageUrl,
         price: price,
         description: description
       },
@@ -59,13 +54,11 @@ exports.postAddProduct = (req, res, next) => {
     });
   }
 
-  // const imageUrl = '/' + image.path;
   const imageUrl = req.image.url;
   const imageAssetId = req.image.asset_id;
   const imagePublicId = req.image.public_id;
 
   const product = new Product({
-    // _id, 
     title, price, description, imageUrl, userId: req.user, imageAssetId, imagePublicId
   });
   product.save()
@@ -74,7 +67,6 @@ exports.postAddProduct = (req, res, next) => {
       res.redirect('/admin/products');
     })
     .catch(err => {
-      // console.log(err);
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
@@ -88,13 +80,11 @@ exports.getEditProduct = (req, res, next) => {
   }
 
   const prodId = req.params.productId;
-  // Product.findById(prodId)
   Product.findOne({
     userId: req.user,
     _id: prodId
     })
     .then(product => {
-      // console.log(product);
       if (!product) {
         return res.redirect('/');
       }
@@ -132,7 +122,6 @@ exports.postEditProduct = (req, res, next) => {
       product: {
         _id: prodId,
         title: updatedTitle,
-        // imageUrl: updatedImageUrl,
         price: updatedPrice,
         description: updatedDescription
       },
@@ -141,8 +130,6 @@ exports.postEditProduct = (req, res, next) => {
     });
   }
 
-  // Product
-  //   .findById(prodId)
   Product.findOne({
     userId: req.user,
     _id: prodId
@@ -152,9 +139,7 @@ exports.postEditProduct = (req, res, next) => {
       product.price = updatedPrice;
       product.description = updatedDescription;
       if (image) {
-        // fileHelper.deleteFile(product.imageUrl.substr(1));
         fileHelper.removeFromCloud(product.imagePublicId);
-        // product.imageUrl = '/' + image.path;
         const imageUrl = req.image.url;
         const imageAssetId = req.image.asset_id;
         const imagePublicId = req.image.public_id;
@@ -179,10 +164,7 @@ exports.getProducts = (req, res, next) => {
   Product.find({
     userId: req.user
   })
-    // .select('title price -_id')
-    // .populate('userId', 'name')
-    .then(products => {
-      // console.log(products);
+    .then(products => {  
       res.render('admin/products', {
         products: products,
         title: 'Admin Products',
@@ -196,16 +178,15 @@ exports.getProducts = (req, res, next) => {
     });
 }
 
-exports.postDeleteProduct = (req, res, next) => {
-  const prodId = req.body.productId;
+exports.deleteProduct = (req, res, next) => {
+  const prodId = req.params.productId;
   Product.findById(prodId)
     .then(product => {
       if(!product) {
         const error = new Error('Product not found');
         error.httpStatusCode = 500;
         return next(error);
-      }
-      // fileHelper.deleteFile(product.imageUrl.substr(1));
+      } 
       fileHelper.removeFromCloud(product.imagePublicId);
       return Product.findOneAndRemove({
         userId: req.user,
@@ -214,11 +195,13 @@ exports.postDeleteProduct = (req, res, next) => {
     })
     .then(() => {
       console.log('Product deleted!');
-      res.redirect('/admin/products');
+      res.status(200).json({
+        message: 'Success!'
+      });
     })
     .catch(err => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
+      res.status(500).json({
+        message: 'Deleting product failed!'
+      });
     });
 }

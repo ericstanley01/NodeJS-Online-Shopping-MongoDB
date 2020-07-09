@@ -122,43 +122,6 @@ exports.postCart = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
-  // let fetchedCart;
-  // let newQuantity = 1;
-  
-  // req.user
-  //   .getCart()
-  //   .then(cart => {
-  //     fetchedCart = cart;
-  //     return cart.getProducts({
-  //       where: {
-  //         id: productId
-  //       }
-  //     });
-  //   })
-  //   .then(products => {
-  //     let product;
-  //     if (products.length > 0) {
-  //       product = products[0];
-  //     }
-  //     if (product) {
-  //       // ... increase quantity by 1
-  //       const oldQuantity = product.cartItem.quantity;
-  //       newQuantity = oldQuantity + 1;
-  //       return product;
-  //     }
-  //     return Product.findByPk(productId)
-  //   })
-  //   .then(product => {
-  //     return fetchedCart.addProduct(product, {
-  //       through: {
-  //         quantity: newQuantity
-  //       }
-  //     });
-  //   })
-  //   .then(() => {
-  //     res.redirect('/cart');
-  //   })
-  //   .catch(err => console.log(err));
 }
 
 exports.postCartDeleteProduct = (req, res, next) => {
@@ -246,7 +209,6 @@ exports.getInvoice = (req, res, next) => {
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
 
-      // invoicePDF.pipe(fs.createWriteStream(invoicePath));
       invoicePDF.pipe(res);
 
       invoicePDF.fontSize(26).text('Invoice', {
@@ -263,17 +225,6 @@ exports.getInvoice = (req, res, next) => {
       invoicePDF.fontSize(20).text('Total price: $' + totalPrice.toFixed(2));
 
       invoicePDF.end();
-    
-      // fs.readFile(invoicePath, (err, data) => {
-      //   if(err) {
-      //     return next(err);
-      //   }
-      //   res.setHeader('Content-Type', 'application/pdf');
-      //   res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"');
-      //   res.send(data);
-      // });
-      // const file = fs.createReadStream(invoicePath);
-      // file.pipe(res);
     })
     .catch(err => {
       const error = new Error(err);
