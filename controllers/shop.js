@@ -1,10 +1,19 @@
 const fs = require('fs');
 const path = require('path');
 const PDFDocument = require('pdfkit');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const Product = require('../models/product');
 const Order = require('../models/order');
-const order = require('../models/order');
+
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+const stripeAuthHeader = {
+  'Content-Type': 'application/x-www-form-urlencoded',
+  'Authorization': `Bearer ${process.env.STRIPE_SECRET_KEY}`
+}
 
 const ITEMS_PER_PAGE = 2;
 
@@ -114,7 +123,6 @@ exports.postCart = (req, res, next) => {
   Product.findById(productId)
     .then(product => req.user.addToCart(product))
     .then(result => {
-      console.log(result);
       res.redirect('/cart');
     })
     .catch(err => {
@@ -138,14 +146,46 @@ exports.postCartDeleteProduct = (req, res, next) => {
     });
 }
 
-exports.postOrder = (req, res, next) => {
+exports.getCheckout = (req, res, next) => {
   req.user.populate('cart.items.productId')
     .execPopulate()
     .then(user => {
-      console.log(user.cart.items);
+      const products = user.cart.items;
+      let totalPrice = 0;
+      
+      products.forEach(p => {
+        totalPrice += p.quantity * p.productId.price;
+      });
+      res.render('shop/checkout', {
+        title: 'Checkout',
+        path: '/cart',
+        products: products,
+        totalPrice: totalPrice.toFixed(2)
+      });
+    })
+    .catch(err => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+}
+
+exports.postOrder = (req, res, next) => {
+  let totalPrice = 0;
+  req.headers = stripeAuthHeader;
+  
+  req.user.populate('cart.items.productId')
+    .execPopulate()
+    .then(user => {
+
+      user.cart.items.forEach(p => {
+        totalPrice += p.quantity * p.productId.price
+      });
+
       const products = user.cart.items.map(i => {
         return {product: { ...i.productId._doc }, quantity: i.quantity}
       });
+      
       const order = new Order({
         user: {
           name: req.user.name,
@@ -156,6 +196,15 @@ exports.postOrder = (req, res, next) => {
       return order.save()
     })
     .then(result => {
+      return stripe.charges.create({
+        source: req.body.stripeToken,
+        amount: totalPrice * 100,
+        currency: 'usd',
+        description: 'Order details',
+        metadata: { userId: req.user._id.toString(), orderId: result._id.toString() }
+      });
+    })
+    .then(stripeResult => {
       return req.user.clearCart();
     })
     .then(result => res.redirect('/orders'))
@@ -181,13 +230,6 @@ exports.getOrders = (req, res, next) => {
       error.httpStatusCode = 500;
       return next(error);
     });
-}
-
-exports.getCheckout = (req, res, next) => {
-  res.render('shop/checkout', {
-    title: 'Checkout',
-    path: '/checkout'
-  })
 }
 
 exports.getInvoice = (req, res, next) => {

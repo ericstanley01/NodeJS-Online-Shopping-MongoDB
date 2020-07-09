@@ -1,0 +1,43 @@
+<%- include('../includes/header.ejs') %>
+<link rel="stylesheet" href="/css/checkout.css" />
+</head>
+
+<body>
+ <%- include('../includes/navigation.ejs') %>
+ <main>
+    <ul class="checkout__item-list">
+        <% products.forEach(p => { %>
+            <li class="checkout__item">
+            <h1><%= p.productId.title %></h1>
+            <h2>Quantity: <%= p.quantity %></h2>
+            </li>
+        <% }); %>
+    </ul>
+    <div class="centered">
+        <h2 
+            id="totalPrice" 
+            value="<%= totalPrice %>" 
+            data-name="Your Order" 
+            data-description="All the items you ordered" 
+            data-locale="auto"
+            data-currency="usd">
+            Total price: $<%= totalPrice %>
+        </h2>
+    </div>
+    <div class="centered">
+        <script src="https://js.stripe.com/v3/"></script>
+        <form action="/create-order" method="POST" id="payment-form">
+            <div class="form-row">
+                <div id="card-element" class="card-element">
+                  <!-- A Stripe Element will be inserted here. -->
+                </div>
+            
+                <!-- Used to display form errors. -->
+                <div id="card-errors" role="alert"></div>
+                <button class="btn submit-payment">Submit Payment</button>
+              </div>
+        </form>
+    </div>
+ </main>
+ <%- include('../includes/footer.ejs') %>
+<script src="/js/card.js"></script>
