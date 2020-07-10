@@ -22,15 +22,15 @@ const { db } = require('./models/user');
 
 const fileHelper = require('./util/file');
 
-// const MONGODB_URI = 'mongodb+srv://' + process.env.MONGODB_USERNAME +
-//     ':' + process.env.MONGODB_PASSWORD +
-//     '@' + process.env.MONGODB_CLUSTER + '/' +
-//     process.env.MONGODB_DATABASE + '?retryWrites=true&w=majority';
-
-const MONGODB_URI = 'mongodb://' + process.env.MONGODB_USERNAME +
+const MONGODB_URI = 'mongodb+srv://' + process.env.MONGODB_USERNAME +
     ':' + process.env.MONGODB_PASSWORD +
     '@' + process.env.MONGODB_CLUSTER + '/' +
     process.env.MONGODB_DATABASE + '?retryWrites=true&w=majority';
+
+// const MONGODB_URI = 'mongodb://' + process.env.MONGODB_USERNAME +
+//     ':' + process.env.MONGODB_PASSWORD +
+//     '@' + process.env.MONGODB_CLUSTER + '/' +
+//     process.env.MONGODB_DATABASE + '?retryWrites=true&w=majority';
 
 const app = express();
 const store = new MongoDBStore({
