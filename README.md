@@ -7,4 +7,4 @@ Version 1.0 - https://nodejs-online-shop-mongodb-v1.herokuapp.com/
 <br />
 Version 1.0 Source - https://github.com/eric-stanley/NodeJS-Online-Shopping-MongoDB/tree/version-1.0
 <br />
-Version 2.0 - https://nodejs-online-shopping-mongodb.herokuapp.com/
+Version 2.0 - https://nodejs-online-shop-mongodb-v2.herokuapp.com/
